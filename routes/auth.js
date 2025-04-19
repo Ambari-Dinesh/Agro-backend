@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcryptjs');
+
 const db = require("../db"); // assuming you're using pg or knex
 const jwt = require("jsonwebtoken");
 
