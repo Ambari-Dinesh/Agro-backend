@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 
-const db = require("../db"); // assuming you're using pg or knex
+const db = require("../db"); 
 const jwt = require("jsonwebtoken");
 
 // Signup

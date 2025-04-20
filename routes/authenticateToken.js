@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const authenticateToken = (req, res, next) => {
  
   const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // Bearer <token>
+  const token = authHeader && authHeader.split(" ")[1]; 
  
 
   if (!token) {
@@ -15,7 +15,7 @@ const authenticateToken = (req, res, next) => {
       return res.status(403).json({ message: "Forbidden: Invalid token" });
     }
 
-    req.user = user; // decoded token payload
+    req.user = user; 
     next();
   });
 };

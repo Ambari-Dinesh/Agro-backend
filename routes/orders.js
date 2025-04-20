@@ -2,6 +2,11 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 const authenticateToken = require("./authenticateToken");
+const sendMail = require("../utils/mailer");
+
+
+
+
 
 // POST: Place an order
 router.post("/", async (req, res) => {
@@ -16,7 +21,13 @@ router.post("/", async (req, res) => {
       "INSERT INTO orders (product_id, quantity, buyer_name, contact, address, status, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
       [product_id, quantity, buyer_name, contact, address, "Pending", user_id]
     );
-    console.log("Order placed");
+
+    const email=await db.query(
+      "SELECT (email) FROM users WHERE id = $1", [user_id]
+    )
+  
+    
+    await sendMail( email.rows[0]?.email, "Order Confirmation", `Hi ${buyer_name}, your order has been placed successfully! We will notify you about updates soon.`);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("Order Insert Error:", err.message);
@@ -32,7 +43,7 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   const userId = req.user.id;
 
   try {
-    // Optional: make sure the order belongs to the user
+    
     const check = await db.query("SELECT * FROM orders WHERE id = $1 AND user_id = $2", [orderId, userId]);
 
     if (check.rows.length === 0) {
@@ -75,7 +86,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// ✅ NEW: Get all orders for the logged-in user
+
 // GET: Get all orders for the logged-in user
 router.get("/", authenticateToken, async (req, res) => {
   const userId = req.user.id; // The userId should be obtained from the JWT payload.
